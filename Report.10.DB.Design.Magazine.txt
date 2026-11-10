@@ -1,0 +1,105 @@
+
+You need a database to manage information about the magazines that you buy habitually.
+
+For each magazine, its title, the ISSN (code that identifies the publication),
+number and year are stored. You need also data about the articles, including its
+title, page of beginning and page of ending. It is assumed that there are no two
+articles with the same title.
+
+Every article can be written by several authors, whose name, e-mail address and
+ascription are stored. Besides, a number that indicates the order of has to be stored.
+
+# Concept and attributes
+Magazine: maganize_id (int / primary key), title (text), issn_code (int/str), year_stored (date and time)
+Articles: article_id (int / primary key) DISTINCT (title) (text), page_begin (int), page_end (int)
+Authors: author_id (int / primary key) name (text), email (str), ascription 
+
+## Link
+### One to many
+- Magazine - Article: magazine_id as foreign key
+### Many to many
+- Article - Author: need a new table to link those (article_author with article_id, author_id be primary/foreign key)
+
+# SQL
+
+```
+CREATE DATABASE magadb;
+USE magadb;
+
+CREATE TABLE magazines(
+magazine_id INT AUTO_INCREMENT PRIMARY KEY,
+issn_code INT NOT NULL,
+title VARCHAR(20) NOT NULL,
+year_stored YEAR NOT NULL,
+UNIQUE(issn_code, year_stored)
+);
+
+
+CREATE TABLE articles(
+article_id INT AUTO_INCREMENT PRIMARY KEY,
+title VARCHAR(20) NOT NULL UNIQUE,
+page_begin INT NOT NULL,
+page_end INT NOT NULL,
+FOREIGN KEY (magazine_id) REFERENCES magazines (magazine_id)
+);
+
+CREATE TABLE authors(
+author_id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(20) NOT NULL, 
+email VARCHAR(20) NOT NULL,
+ascription VARCHAR(20) NOT NULL,
+);
+
+
+CREATE TABLE artible_author(
+article_id INT NOT NULL,
+author_id INT NOT NULL,
+author_order INT NOT NULL,
+PRIMARY KEY (article_id, author_id),
+UNIQUE (article_id, author_id),
+FOREIGN KEY (article_id) REFERENCES (article_id),
+FOREIGN KEY (author_id) REFERENCES (author_id)
+);
+
+
+DESCRIBE magazines;
+DESCRIBE articles;
+DESCRIBE authors;
+DESCRIBE article_author;
+```
+
+
+# Output (describe)
+--- Table magazines
+Field,Type,Null,Key,Default,Extra
+magazine_id,int,NO,PRI,NULL,auto_increment
+issn_code,int,NO,MUL,NULL,
+title,varchar(20),NO,,NULL,
+year_stored,year,NO,,NULL,
+
+
+--- Table Articles
+
+Field,Type,Null,Key,Default,Extra
+article_id,int,NO,PRI,NULL,auto_increment
+title,varchar(20),NO,UNI,NULL,
+page_begin,int,NO,,NULL,
+page_end,int,NO,,NULL,
+magazine_id,int,NO,MUL,NULL,
+
+--- Table Author
+Field,Type,Null,Key,Default,Extra
+author_id,int,NO,PRI,NULL,auto_increment
+name,varchar(20),NO,,NULL,
+email,varchar(20),NO,,NULL,
+ascription,varchar(20),NO,,NULL,
+
+--- Table Author-Article
+
+Field,Type,Null,Key,Default,Extra
+author_id,int,NO,PRI,NULL,auto_increment
+name,varchar(20),NO,,NULL,
+email,varchar(20),NO,,NULL,
+ascription,varchar(20),NO,,NULL,
+
+
