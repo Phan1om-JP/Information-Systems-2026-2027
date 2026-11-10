@@ -1,0 +1,117 @@
+
+A Non-Government Organization (NGO) wants to prepare a database for all its
+projects. It has diverse head offices in several countries which take manage and 
+coordinate the projects of that country.
+
+On head offices, an identifier, the city and country where it is located, its address,
+a phone number and the name of the director are stored. Every head office
+manages a set of projects, with a code, a title, dates of beginning and end, the
+assigned budget and the name of the person in charge. One project is formed by
+a set of actions that can affect to several cities.
+
+We want to know what actions are realised in each city, storing its name, country
+and no of inhabitants. We also need an identifier to differentiate them. Also
+there is wished the investment of the project that corresponds to the city and a
+small description of the action.
+
+# Concept and attributes
+
+## Tables
+- Head offices: ho_id (primary key), city (str), country (str), address (str), phone (int), dir_name (str) 
+- Project : project_id (primary key), ho_id (foreign key), title, start_date, end_date, budget, p_in_charger_name
+- Action : project_id (primary/foreign key), Investment, Description
+- City : city_id (primary key), name (str), country (str), inhabitants (str)
+
+
+
+## Link
+- One to many : Head office - Project (head_office_id as foreign key)
+- Many to many : Project - City (might need to create the middle table (proj_city))
+
+
+# SQL
+
+```
+
+CREATE DATABASE ngodb;
+USE ngodb;
+
+CREATE TABLE head_offices(
+ho_id INT AUTO_INCREMENT PRIMARY KEY,
+city VARCHAR(20) NOT NULL,
+country VARCHAR(20) NOT NULL,
+address VARCHAR(20) NOT NULL,
+phone INT NOT NULL,
+dir_name VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE projects (
+project_id INT AUTO_INCREMENT PRIMARY KEY,
+ho_id INT FOREIGN KEY,
+title VARCHAR(20) NOT NULL,
+start_date DATE NOT NULL,
+end_date DATE NOT NULL,
+budget INT NOT NULL,
+p_in_charger_name VARCHAR(20) NOT NULL
+FOREIGN KEY (ho_id) REFERENCES head_offices (ho_id)
+);
+
+CREATE TABLE cities(
+city_id INT AUTO_INCREMENT PRIMARY KEY,
+city_name VARCHAR(20) NOT NULL,
+country VARCHAR(20) NOT NULL,
+inhabitant VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE actions(
+project_id INT NOT NULL,
+investment DECIMAL(15, 2) NOT NULL,
+description VARCHAR(500) NOT NULL,
+PRIMARY (project_id, city_id),
+FOREIGN KEY (project_id) REFERENCES projects (project_id)
+FOREIGN KEY (city_id) REFERENCES cities (city_id)
+);
+
+
+DESCRIBE head_offices; 
+DESCRIBE cities; 
+DESCRIBE projects; 
+DESCRIBE actions;
+
+```
+
+
+# Output
+
+--- Table head_offices 
+Field,Type,Null,Key,Default,Extra
+ho_id,int,NO,PRI,NULL,auto_increment
+city,varchar(20),NO,,NULL,
+country,varchar(20),NO,,NULL,
+address,varchar(20),NO,,NULL,
+phone,int,NO,,NULL,
+dir_name,varchar(20),NO,,NULL,
+
+--- Table projects
+Field,Type,Null,Key,Default,Extra
+project_id,int,NO,PRI,NULL,auto_increment
+ho_id,int,NO,MUL,NULL,
+title,varchar(20),NO,,NULL,
+start_date,date,NO,,NULL,
+end_date,date,NO,,NULL,
+budget,int,NO,,NULL,
+p_in_charger_name,varchar(20),NO,,NULL,
+
+--- Table cities
+Field,Type,Null,Key,Default,Extra
+city_id,int,NO,PRI,NULL,auto_increment
+city_name,varchar(20),NO,,NULL,
+country,varchar(20),NO,,NULL,
+inhabitant,varchar(20),NO,,NULL,
+
+--- Table actions
+Field,Type,Null,Key,Default,Extra
+project_id,int,NO,PRI,NULL,
+city_id,int,NO,PRI,NULL,
+investment,"decimal(15,2)",NO,,NULL,
+description,varchar(500),NO,,NULL,
